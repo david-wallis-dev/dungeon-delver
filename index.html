@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dungeon Delver</title>
+	<link href="https://fonts.googleapis.com/css?family=MedievalSharp" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="styles/main.css">
+</head>
+<body>
+	<h1 id="game-title">Dungeon Delver</h1>
+	<!--CHARACTER SELECTION-->
+	<div id="character-selection-ui" class="hidden">
+		<h2 id="character-selection-instruction">Pick your Character</h2>
+		<div class="character-select-box">
+			<a href="#" onclick="GameManager.characterSelected('warrior')">
+				<img src="img/warrior.png">
+				<h2>Warrior</h2>
+				<p>The Warrior is brave and strong, charging into battle with the most strength and defence but lacking in intellect.</p>
+				<h3>Starting Stats</h3>
+				<p>Health: 10<img class="stat-icon" src="img/icons/heart.png"></p>
+				<p>Defence: 6<img class="stat-icon" src="img/icons/shield.png"></p>
+				<p>Attack: 4<img class="stat-icon" src="img/icons/swords.png"></p>
+				<p>Speed: 2<img class="stat-icon" src="img/icons/boot.png"></p>	
+			</a>
+		</div>
+		<div class="character-select-box">
+			<a href="#" onclick="GameManager.characterSelected('mage')">
+				<img src="img/mage.png">
+				<h2>Mage</h2>
+				<p>The Mage is very intelligent with a strong grasp on the arcane arts, she has the strongest attack but also the lowest defence.</p>
+				<h3>Starting Stats</h3>
+				<p>Health: 10<img class="stat-icon" src="img/icons/heart.png"></p>
+				<p>Defence: 2<img class="stat-icon" src="img/icons/shield.png"></p>
+				<p>Attack: 6<img class="stat-icon" src="img/icons/swords.png"></p>
+				<p>Speed: 4<img class="stat-icon" src="img/icons/boot.png"></p>
+			</a>	
+		</div>
+		<div class="character-select-box">
+			<a href="#" onclick="GameManager.characterSelected('theif')">
+				<img src="img/theif.png">
+				<h2>Theif</h2>
+				<p>The Theif is quick and sneaky, he isnt the strongest character but makes up for it with speed.</p>
+				<h3>Starting Stats</h3>
+				<p>Health: 10<img class="stat-icon" src="img/icons/heart.png"></p>
+				<p>Defence: 2<img class="stat-icon" src="img/icons/shield.png"></p>
+				<p>Attack: 4<img class="stat-icon" src="img/icons/swords.png"></p>
+				<p>Speed: 6<img class="stat-icon" src="img/icons/boot.png"></p>
+			</a>
+		</div>
+	</div>
+	<!--GAME MAIN UI-->
+	<div id="ui-container" class="hidden">
+		<!--SIDEBAR-->
+		<div id="sidebar">
+			<div id="player-info">
+				<img id="player-img" src="">
+				<h3>Stats</h3>
+				<p>Health: <span id="player-current-health">0</span>/<span id="player-max-health">0</span><img class="stat-icon" src="img/icons/heart.png"></p>
+				<p>Defence: <span id="player-defence">0</span><img class="stat-icon" src="img/icons/shield.png"></p>
+				<p>Attack: <span id="player-attack">0</span><img class="stat-icon" src="img/icons/swords.png"></p>
+				<p>Speed: <span id="player-speed">0</span><img class="stat-icon" src="img/icons/boot.png"></p>
+				<p id="player-gold-display">Gold: <span id="player-gold">0</span></p>
+				<p id="player-level-display">Lvl: <span id="player-level">0</span></p>
+				<p id="player-xp-display">XP: <span id="player-xp">0</span>/<span id="player-xp-goal">0</span></p>
+				<div id="player-stamina-container">
+					<p>Stamina</p>
+					<div id="player-stamina-bar">
+						<div id="player-stamina-bar-value">
+						</div>
+						<p id="player-stamina-value-text"><span id="player-current-stamina"></span>/<span id="player-max-stamina"></span></p>
+					</div>
+				</div>
+			</div>
+			<div id="sidebar-town-buttons">
+				<ul class="sb-ul">
+					<li onclick="Locations.travelTo(Locations.shop)" class="sb-li"><img class="sb-btn-img" src="img/icons/coins.png">Shop</li>
+					<li onclick="Locations.travelTo(Locations.rest)" class="sb-li"><img class="sb-btn-img" src="img/icons/bed.png">Rest</li>
+					<li onclick="Locations.travelTo(Locations.craft)" class="sb-li"><img class="sb-btn-img" src="img/icons/bag.png">Craft</li>
+					<li onclick="Locations.travelTo(Locations.map)" class="sb-li"><img class="sb-btn-img" src="img/icons/compass.png">Travel</li>
+				</ul>
+			</div>
+			<div id="sidebar-shop-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="Locations.travelTo(Locations.shop.buyItems)" class="sb-li">Buy Items</li>
+					<li onclick="Locations.travelTo(Locations.shop.sellItems), printAction('left click the items you wish to sell.'), GameManager.selling(true)" class="sb-li">Sell Items</li>
+					<li onclick="Locations.travelTo(Locations.town)" class="sb-li">Back to Town</li>
+				</ul>				
+			</div>
+			<div id="sidebar-shop-sell-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="Locations.travelTo(Locations.shop), GameManager.selling(false)" class="sb-li">Done Selling</li>
+				</ul>				
+			</div>
+			<div id="sidebar-shop-buy-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="GameManager.buyItem(Items.consumables.health_potion, 10)" class="sb-li">Health Potion: 10 gold</li>
+					<li onclick="GameManager.buyItem(Items.consumables.stamina_potion, 10)" class="sb-li">Stamina Potion: 10 gold</li>
+					<li onclick="GameManager.buyItem(Items.leather, 5)" class="sb-li">Leather: 5 gold</li>
+					<li onclick="GameManager.buyItem(Items.copper_ore, 5)" class="sb-li">Copper Ore: 5 gold</li>
+					<li onclick="GameManager.buyItem(Items.tin_ore, 8)" class="sb-li">Tin Ore: 8 gold</li>
+					<li onclick="GameManager.buyItem(Items.iron_ore, 10)" class="sb-li">Iron Ore: 10 gold</li>
+					<li onclick="Locations.travelTo(Locations.shop)" class="sb-li">Done Buying</li>
+				</ul>				
+			</div>
+			<div id="sidebar-rest-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="GameManager.rest('inn')" class="sb-li">Sleep at Inn<br>(10 gold)</li>
+					<li onclick="GameManager.rest('street')" class="sb-li">Sleep on Street<br>(1 damage)</li>
+					<li onclick="Locations.travelTo(Locations.town)" class="sb-li">Back to Town</li>
+				</ul>				
+			</div>
+			<div id="sidebar-craft-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="Locations.travelTo(Locations.craft.potions)" class="sb-li">Potions</li>
+					<li onclick="Locations.travelTo(Locations.craft.weapons)" class="sb-li">Weapons</li>
+					<li onclick="Locations.travelTo(Locations.craft.armour)" class="sb-li">Armour</li>
+					<li onclick="Locations.travelTo(Locations.town)" class="sb-li">Back to Town</li>
+				</ul>
+			</div>
+			<div id="sidebar-craft-potions-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="player.craftItem(Items.consumables.health_potion)" class="sb-li craft-button" data-tooltip="consumables.health_potion">Health Potion<br>Health +5 per use</li>
+					<li onclick="player.craftItem(Items.consumables.stamina_potion)" class="sb-li craft-button" data-tooltip="consumables.stamina_potion">Stamina Potion<br>Stamina +5 per use</li>
+					<li onclick="Locations.travelTo(Locations.craft)" class="sb-li">Go back</li>
+				</ul>
+			</div>
+			<div id="sidebar-craft-weapons-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="player.craftItem(Items.weapons.copper_sword)" class="sb-li craft-button" data-tooltip="weapons.copper_sword">Copper Sword<br>Attack +1</li>
+					<li onclick="player.craftItem(Items.weapons.bronze_sword)" class="sb-li craft-button" data-tooltip="weapons.bronze_sword">Bronze Sword<br>Attack +2</li>
+					<li onclick="player.craftItem(Items.weapons.iron_sword)" class="sb-li craft-button" data-tooltip="weapons.iron_sword">Iron Sword<br>Attack +4</li>
+					<li onclick="Locations.travelTo(Locations.craft)" class="sb-li">Go back</li>
+				</ul>
+			</div>
+			<div id="sidebar-craft-armour-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="player.craftItem(Items.armour.leather_helm)" class="sb-li craft-button" data-tooltip="armour.leather_helm">Leather Helm<br> Defence +1</li>
+					<li onclick="player.craftItem(Items.armour.leather_chest)" class="sb-li craft-button" data-tooltip="armour.leather_chest">Leather Chest<br>Defence +2</li>
+					<li onclick="player.craftItem(Items.armour.leather_boots)" class="sb-li craft-button" data-tooltip="armour.leather_boots">Leather Boots<br>Speed +1</li>
+					<li onclick="player.craftItem(Items.armour.bronze_helm)" class="sb-li craft-button" data-tooltip="armour.bronze_helm">Bronze Helm<br>Defence +2</li>
+					<li onclick="player.craftItem(Items.armour.bronze_chest)" class="sb-li craft-button" data-tooltip="armour.bronze_chest">Bronze Chest<br>Defence +4</li>
+					<li onclick="player.craftItem(Items.armour.bronze_boots)" class="sb-li craft-button" data-tooltip="armour.bronze_boots">Bronze Boots<br>Speed +2</li>
+					<li onclick="player.craftItem(Items.armour.iron_helm)" class="sb-li craft-button" data-tooltip="armour.iron_helm">Iron Helm<br>Defence +4</li>
+					<li onclick="player.craftItem(Items.armour.iron_chest)" class="sb-li craft-button" data-tooltip="armour.iron_chest">Iron Chest<br>Defence +6</li>
+					<li onclick="player.craftItem(Items.armour.iron_boots)" class="sb-li craft-button" data-tooltip="armour.iron_boots">Iron Boots<br>Speed +4</li>
+					<li onclick="Locations.travelTo(Locations.craft)" class="sb-li">Go back</li>
+				</ul>
+			</div>
+			<div id="sidebar-travel-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="Locations.travelTo(Locations.lonelyHollow)" class="sb-li">Lonely Hollow<br>Level 1-2</li>
+					<li onclick="Locations.travelTo(Locations.bleakfallsBarrow)" class="sb-li">Bleakfalls Barrow<br>Level 3-4</li>
+					<li onclick="Locations.travelTo(Locations.banditKeep)" class="sb-li">Bandit Keep<br>Level 5</li>
+					<li onclick="Locations.travelTo(Locations.town)" class="sb-li">Back to Town</li>
+				</ul>
+			</div>
+			<div id="sidebar-lonelyHollow-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="player.currentLocation.explore()" class="sb-li">Explore (1 Stamina)</li>
+					<li onclick="player.currentLocation.mine()" class="sb-li ore-button">Mine Copper Ore</li>
+					<li onclick="Locations.travelTo(Locations.map)" class="sb-li">Return to Map</li>
+				</ul>
+			</div>
+			<div id="sidebar-bleakfallsBarrow-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="player.currentLocation.explore()" class="sb-li">Explore (1 Stamina)</li>
+					<li onclick="player.currentLocation.mine()" class="sb-li ore-button">Mine Tin Ore</li>
+					<li onclick="Locations.travelTo(Locations.map)" class="sb-li">Return to Map</li>
+				</ul>
+			</div>
+			<div id="sidebar-banditKeep-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="player.currentLocation.explore()" class="sb-li">Explore (1 Stamina)</li>
+					<li onclick="player.currentLocation.mine()" class="sb-li ore-button">Mine Iron Ore</li>
+					<li onclick="Locations.travelTo(Locations.map)" class="sb-li">Return to Map</li>
+				</ul>
+			</div>
+			<div id="sidebar-combat-buttons" class="hidden">
+				<br>
+				<p>Enemy Type: <span id="enemy-type"></span></p>
+				<p>Enemy Level: <span id="enemy-level">0</span></p>
+				<p>Enemy Health: <span id="enemy-current-health">0</span>/<span id="enemy-max-health">0</span><img class="stat-icon" src="img/icons/heart.png"></p>
+				<p>Enemy Attack: <span id="enemy-attack">0</span><img class="stat-icon" src="img/icons/swords.png"></p>
+				<p>Enemy Speed: <span id="enemy-speed">0</span><img class="stat-icon" src="img/icons/boot.png"></p>
+				<ul class="sb-ul">
+					<li onclick="Enemies.attackEnemy()" class="sb-li">Attack!</li>
+					<li onclick="Locations.changeButtons('#sidebar-combat-buttons', player.currentLocation.buttonsID), Locations.loadCurrentLocation()" class="sb-li">Flee from Combat</li>
+				</ul>
+			</div>
+			<div id="sidebar-event-buttons" class="hidden">
+				<ul class="sb-ul">
+					<li onclick="Locations.changeButtons('#sidebar-event-buttons', player.currentLocation.buttonsID), Locations.loadCurrentLocation()" class="sb-li">Continue</li>
+				</ul>				
+			</div>
+		</div>
+		<!--LOCATION WINDOW-->
+		<div id="location">
+			<div id="location-info">
+				<h2 id="location-name"></h2>
+				<p id="location-description"></p>
+			</div>
+			<img id="location-img" src="">
+		</div>
+		<!--ACTION LOG-->
+		<div id="actions">
+			<div>
+				<h2>Action Log</h2>
+				<div id="printed-actions">
+				</div>
+			</div>
+		</div>
+		<!--PLAYER INVENTORY-->
+		<div id="player-inv">
+			<h1>Inventory</h1>
+			<img src="img/icons/armour.png" id="inv-bag-icon" onclick="player.openEquipment()">
+			<img src="img/icons/scroll.png" id="inv-quest-icon" onclick="player.openQuestLog()">
+			<p id="player-quest-points-display">Quest Points: <span id="player-quest-points">0</span></p>
+			<div id="inv-slots-div">
+				<div id="inv-slot-0" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-1" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-2" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-3" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-4" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-5" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-6" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-7" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-8" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-9" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-10" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-11" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-12" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-13" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-14" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div id="inv-slot-15" class="inv-slot">
+					<img src="">
+					<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+				</div>
+				<div class="clear-both"></div>
+			</div>
+		</div>
+	</div>
+	<!--EQUIP WINDOW-->
+	<div id="player-equip" class="hidden">
+		<h2 id="equip-slot-heading-0">Head Slot</h2>
+		<div id="equip-slot-0" class="equip-slot">
+			<img src="">
+			<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+		</div>
+		<h2 id="equip-slot-heading-1">Chest Slot</h2>
+		<div id="equip-slot-1" class="equip-slot">
+			<img src="">
+			<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+		</div>
+		<h2 id="equip-slot-heading-2">Feet Slot</h2>
+		<div id="equip-slot-2" class="equip-slot">
+			<img src="">
+			<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+		</div>
+		<h2 id="equip-slot-heading-3">Weapon Slot</h2>
+		<div id="equip-slot-3" class="equip-slot">
+			<img src="">
+			<p><span class="inv-slot-count"></span><br><span class="inv-slot-name"></span></p>
+		</div>
+	</div>
+	<!--QUEST WINDOW-->
+	<div id="quest-log" class="hidden">
+	</div>
+	<!--GAME OVER DISPLAY-->
+	<div id="game-ui-gameover" class="hidden">
+		<h1>YOU DIED</h1>
+		<p>Refresh Page to play again.</p>
+	</div>
+	<!--UTILITY-->
+	<div class="div-tooltip hidden"></div>
+
+	<script type="text/javascript" src="js/frameworks/jQuery.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript" src="js/player.js"></script>
+	<script type="text/javascript" src="js/locations.js"></script>
+	<script type="text/javascript" src="js/enemies.js"></script>
+	<script type="text/javascript" src="js/items.js"></script>
+	<script type="text/javascript" src="js/quest_system.js"></script>
+	<script type="text/javascript" src="js/event_system.js"></script>
+	<script type="text/javascript" src="js/game_manager.js"></script>
+</body>
+</html>
