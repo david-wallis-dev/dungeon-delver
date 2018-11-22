@@ -39,7 +39,8 @@ function Player(char, health, defence, attack, speed){
 		printAction("Not enough Stamina. You need to rest.");
 	}
 	this.update = function(){
-		if(this.xp >= this.targetXP){this.levelUp();}
+		if(this.xp >= this.targetXP && this.level < 5){this.levelUp();}
+		if(this.level === 5 && this.xp > this.targetXP){this.xp = this.targetXP;}
 		if(this.currentStamina < 0){this.currentStamina = 0;}
 		playerCurrentHealthDisplay.innerHTML = this.currentHealth;
 		playerMaxHealthDisplay.innerHTML = this.maxHealth;
@@ -58,7 +59,17 @@ function Player(char, health, defence, attack, speed){
 			$("#ui-container").hide();
 			$("#game-ui-gameover").fadeIn(3000);
 		}
-	},
+	}
+	this.sellXP = function(){
+		if(this.xp >= 10){
+			this.xp -= 10;
+			this.gold += 5;
+			this.update();
+		}
+		else {
+			printAction("You don't have enough XP to sell.");
+		}
+	}
 	this.drinkPotion = function(pot){
 		if(pot === "Health Potion"){
 			this.currentHealth += 5;
